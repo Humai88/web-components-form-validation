@@ -1,17 +1,22 @@
 .form-wrapper {
-  width: 500px;
-  margin: auto;
-  margin-top: 10px;
+    width: 500px;
+    margin: auto;
+    margin-top: 10px;
 }
 
 .form-wrapper div {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 .form-wrapper .error,
 .form-wrapper .label {
-  margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 .form-wrapper .error {
-  color: red;
-  margin-top: 3px;
+    color: red;
+    margin-top: 3px;
+}
+.form-wrapper .successMessage {
+    padding: 0.5rem 1rem;
+    background-color: #a3da8d;
+    width: 200px;
 }

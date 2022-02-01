@@ -1,8 +1,7 @@
-import logo from './logo.svg';
 import './App.css';
-import { useFormik, useCallback } from 'formik';
-
-import { useRef, useLayoutEffect, useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useRef, useLayoutEffect, useState, useEffect } from 'react';
 
 const Label = props => {
     return <div className="label">{props.children}</div>;
@@ -11,8 +10,9 @@ const Error = props => {
     return <div className="error">{props.children}</div>;
 };
 
-function App() {
-    const [emailError, setEmailError] = useState(null);
+function ValidationWithYup() {
+    // Local state for successful submission message
+    const [isSent, setIsSent] = useState(false);
 
     const textareaRef = useRef(null);
     const selectRef = useRef(null);
@@ -20,47 +20,48 @@ function App() {
     const numberRef = useRef(null);
     const passwordRef = useRef(null);
 
-    const formik = useFormik({
+    const validate = Yup.object({
+        textarea: Yup.string()
+            .min(10, 'You should type at least 10 characters in your message!')
+            .max(350, 'Too Long!')
+            .required('Required!'),
+        email: Yup.string().email('Invalid email').required('Required'),
+        password: Yup.string()
+            .min(8, 'Password must be at least 8 characters long!')
+            .max(21, 'Too Long!')
+            .required('Required!'),
+    });
+    const { handleSubmit, handleChange, values, errors } = useFormik({
         initialValues: {
-            textarea: '',
-            select: '',
             email: '',
+            select: '',
+            textarea: '',
             number: 0,
             password: '',
         },
-        validate: values => {
-            // To use something like YUP here
-            const errors = {};
-            console.log('values', values);
-            setEmailError(null);
-            if (!values.email) {
-                errors.email = 'Required';
-                setEmailError('Required');
-            } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-            ) {
-                errors.email = 'Invalid email address';
-                setEmailError('Invalid email address');
-            }
-            return errors;
-        },
-        onSubmit: (values, { setSubmitting }) => {
-            setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-            }, 400);
+        validationSchema: validate,
+        onSubmit: (values, { setSubmitting, resetForm }) => {
+            resetForm();
+            setIsSent(true);
+            setSubmitting(false);
+            console.log(values);
         },
     });
 
-    const handleChange = e => {
-        console.log('value', e.target.value);
-        formik.handleChange(e);
-    };
+    // Make successful submission message dissapear after 2.5sec
+    useEffect(() => {
+        const timeId = setTimeout(() => {
+            setIsSent(false);
+        }, 2500);
+        return () => {
+            clearTimeout(timeId);
+        };
+    }, [isSent]);
 
     useLayoutEffect(() => {
+        textRef.current.addEventListener('sl-change', handleChange);
         textareaRef.current.addEventListener('sl-change', handleChange);
         selectRef.current.addEventListener('sl-change', handleChange);
-        textRef.current.addEventListener('sl-change', handleChange);
         numberRef.current.addEventListener('sl-change', handleChange);
         passwordRef.current.addEventListener('sl-change', handleChange);
     }, [textareaRef, selectRef, textRef, numberRef, passwordRef, handleChange]);
@@ -68,24 +69,27 @@ function App() {
     return (
         <div className="App">
             <div className="form-wrapper">
-                <form onSubmit={formik.onSubmit}>
+                <form onSubmit={handleSubmit}>
                     <div>
                         <Label>Email</Label>
                         <sl-input
                             ref={textRef}
                             type="text"
                             name="email"
-                            value={formik.values.email}
+                            value={values.email}
                         ></sl-input>
-                        {emailError && <Error>{emailError}</Error>}
+                        <Error> {errors.email ? errors.email : null}</Error>
                     </div>
                     <div>
                         <Label>Textarea</Label>
                         <sl-textarea
                             ref={textareaRef}
                             name="textarea"
-                            value={formik.values.textarea}
+                            value={values.textarea}
                         ></sl-textarea>
+                        <Error>
+                            {errors.textarea ? errors.textarea : null}
+                        </Error>
                     </div>
                     <div>
                         <Label>Select</Label>
@@ -117,6 +121,7 @@ function App() {
                             ref={numberRef}
                             type="number"
                             name="number"
+                            value={values.number}
                         ></sl-input>
                     </div>
                     <div>
@@ -125,13 +130,24 @@ function App() {
                             ref={passwordRef}
                             type="password"
                             name="password"
+                            value={values.password}
                         ></sl-input>
+                        <Error>
+                            {errors.password ? errors.password : null}
+                        </Error>
                     </div>
-                    <sl-button type="submit">Submit</sl-button>
+                    {isSent ? (
+                        <div className="successMessage">
+                            Submission was suceessful
+                        </div>
+                    ) : null}
+                    <sl-button variant="primary" type="submit">
+                        Submit
+                    </sl-button>
                 </form>
             </div>
         </div>
     );
 }
 
-export default App;
+export default ValidationWithYup;
