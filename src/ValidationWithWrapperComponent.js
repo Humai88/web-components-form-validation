@@ -16,8 +16,6 @@ function ValidationWithWrapperComponent() {
     // Local state for successful submission message
     const [isSent, setIsSent] = useState(false);
 
-    const selectRef = useRef(null);
-
     const validate = Yup.object({
         textarea: Yup.string()
             .min(10, 'You should type at least 10 characters in your message!')
@@ -80,30 +78,6 @@ function ValidationWithWrapperComponent() {
                         <Error>
                             {errors.textarea ? errors.textarea : null}
                         </Error>
-                    </div>
-                    <div>
-                        <Label>Select</Label>
-                        <sl-select ref={selectRef} name="select">
-                            <sl-menu-item value="option-1">
-                                Option 1
-                            </sl-menu-item>
-                            <sl-menu-item value="option-2">
-                                Option 2
-                            </sl-menu-item>
-                            <sl-menu-item value="option-3">
-                                Option 3
-                            </sl-menu-item>
-                            <sl-divider></sl-divider>
-                            <sl-menu-item value="option-4">
-                                Option 4
-                            </sl-menu-item>
-                            <sl-menu-item value="option-5">
-                                Option 5
-                            </sl-menu-item>
-                            <sl-menu-item value="option-6">
-                                Option 6
-                            </sl-menu-item>
-                        </sl-select>
                     </div>
                     <div>
                         <Label>Number</Label>
