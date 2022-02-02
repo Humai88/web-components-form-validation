@@ -4,11 +4,13 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ValidationWithYup from './ValidationWithYup';
+import ValidationWithWrapperComponent from './ValidationWithWrapperComponent';
 
 ReactDOM.render(
     <React.StrictMode>
         {/* <App /> */}
-        <ValidationWithYup />
+        {/* <ValidationWithYup /> */}
+        <ValidationWithWrapperComponent />
     </React.StrictMode>,
     document.getElementById('root')
 );

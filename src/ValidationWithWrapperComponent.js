@@ -1,7 +1,9 @@
 import './App.css';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useRef, useLayoutEffect, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import { Input } from './Input';
+import { Textarea } from './Textarea';
 
 const Label = props => {
     return <div className="label">{props.children}</div>;
@@ -10,15 +12,11 @@ const Error = props => {
     return <div className="error">{props.children}</div>;
 };
 
-function ValidationWithYup() {
+function ValidationWithWrapperComponent() {
     // Local state for successful submission message
     const [isSent, setIsSent] = useState(false);
 
-    const textareaRef = useRef(null);
     const selectRef = useRef(null);
-    const textRef = useRef(null);
-    const numberRef = useRef(null);
-    const passwordRef = useRef(null);
 
     const validate = Yup.object({
         textarea: Yup.string()
@@ -58,42 +56,27 @@ function ValidationWithYup() {
         };
     }, [isSent]);
 
-    useLayoutEffect(() => {
-        textRef.current.addEventListener('sl-change', handleChange);
-        textareaRef.current.addEventListener('sl-change', handleChange);
-        selectRef.current.addEventListener('sl-change', handleChange);
-        numberRef.current.addEventListener('sl-change', handleChange);
-        passwordRef.current.addEventListener('sl-change', handleChange);
-        return () => {
-            textRef.current.removeEventListener('sl-change', handleChange);
-            textareaRef.current.removeEventListener('sl-change', handleChange);
-            selectRef.current.removeEventListener('sl-change', handleChange);
-            numberRef.current.removeEventListener('sl-change', handleChange);
-            passwordRef.current.removeEventListener('sl-change', handleChange);
-        };
-    }, [textareaRef, selectRef, textRef, numberRef, passwordRef, handleChange]);
-
     return (
         <div className="App">
             <div className="form-wrapper">
                 <form onSubmit={handleSubmit}>
                     <div>
                         <Label>Email</Label>
-                        <sl-input
-                            ref={textRef}
+                        <Input
+                            onChange={handleChange}
                             type="text"
                             name="email"
                             value={values.email}
-                        ></sl-input>
+                        ></Input>
                         <Error> {errors.email ? errors.email : null}</Error>
                     </div>
                     <div>
                         <Label>Textarea</Label>
-                        <sl-textarea
-                            ref={textareaRef}
+                        <Textarea
+                            onChange={handleChange}
                             name="textarea"
                             value={values.textarea}
-                        ></sl-textarea>
+                        ></Textarea>
                         <Error>
                             {errors.textarea ? errors.textarea : null}
                         </Error>
@@ -124,21 +107,21 @@ function ValidationWithYup() {
                     </div>
                     <div>
                         <Label>Number</Label>
-                        <sl-input
-                            ref={numberRef}
+                        <Input
+                            onChange={handleChange}
                             type="number"
                             name="number"
                             value={values.number}
-                        ></sl-input>
+                        ></Input>
                     </div>
                     <div>
                         <Label>Password</Label>
-                        <sl-input
-                            ref={passwordRef}
+                        <Input
+                            onChange={handleChange}
                             type="password"
                             name="password"
                             value={values.password}
-                        ></sl-input>
+                        ></Input>
                         <Error>
                             {errors.password ? errors.password : null}
                         </Error>
@@ -157,4 +140,4 @@ function ValidationWithYup() {
     );
 }
 
-export default ValidationWithYup;
+export default ValidationWithWrapperComponent;
